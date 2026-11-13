@@ -6,7 +6,15 @@ A modern, production-grade Single Page Application (SPA) built with **React**, *
 
 ## ✨ Features
 
-- **🎨 Minimal, High-Impact UI/UX**: Dark-themed, responsive interface with smooth micro-interactions, clean cards, and zero cluttered text.
+- **💎 Light Glassmorphism UI/UX**: Crisp, clean light aesthetic with frosted translucent panels, specular highlights, high-contrast typography, and smooth micro-interactions.
+- **⚡ 1-Click Emergency Quick-Filler**: Immediate autofill presets for urgent situations:
+  - 🚨 *Water Pipe Burst / Flooding* (Plumbing, Bathroom/Washroom, Emergency)
+  - ⚡ *Short Circuit / Sparks* (Electrical, Room Maintenance, Emergency)
+  - 🔒 *Door Lock Jammed / Locked Out* (Carpentry, Room Maintenance, High/Emergency)
+  - 💨 *Hazardous Smell / Gas* (Safety/Security, Emergency)
+- **🎯 Auto-Assigned Ticket ID in Search**:
+  - Automatically captures the generated Ticket ID upon submission.
+  - Auto-fills the search input on the Tracking page (`/track`) and Home page with 1-click access so students don't need to manually retype or copy-paste long ticket numbers.
 - **📍 Multi-Block Campus Support**:
   - `Boys Hostel 1`
   - `Boys Hostel 2`
@@ -67,7 +75,7 @@ VITE_ADMIN_PASSCODE=warden2026
 Run the following commands in the project folder:
 
 ```bash
-# Install dependencies (already prepared)
+# Install dependencies
 npm install
 
 # Start the local development server
@@ -83,14 +91,14 @@ Open your browser at `http://localhost:5173`.
 ```text
 ├── supabase_schema.sql      # All-in-one database, storage, RLS & rate limit script
 ├── .env.example             # Documented environment template
-├── .env                     # Local credentials file
+├── .env                     # Local credentials file (gitignored)
 ├── index.html               # Main entry HTML
 ├── vite.config.js           # Vite + Tailwind v4 configuration
 ├── package.json             # Dependencies & scripts
 └── src/
     ├── main.jsx             # React entrypoint
     ├── App.jsx              # Router & route definitions
-    ├── index.css            # Tailwind CSS & global theme
+    ├── index.css            # Tailwind CSS & light glassmorphic theme
     ├── lib/
     │   ├── supabase.js      # Supabase client initialization & helper
     │   ├── storage.js       # Image upload to 'complaint-attachments' bucket
@@ -104,20 +112,7 @@ Open your browser at `http://localhost:5173`.
     │   └── SupabaseAlert.jsx# Setup banner when credentials are not yet configured
     └── pages/
         ├── Home.jsx         # Hero, quick search, live counters & category shortcuts
-        ├── SubmitComplaint.jsx # Form with student info, hostel/room, category, photo, rate limiting
-        ├── TrackComplaint.jsx  # Status tracker with 4-step timeline & audit history
+        ├── SubmitComplaint.jsx # Form with student info, 1-click emergency filler, optional photo
+        ├── TrackComplaint.jsx  # Status tracker with auto-assigned ticket & 4-step timeline
         └── AdminDashboard.jsx  # Warden control panel with filters, quick update modal, & CSV export
 ```
-
----
-
-## 🔒 Security & Rate Limiting Overview
-
-1. **Database-Level Guard**:
-   Even if someone bypasses the frontend, the PostgreSQL trigger `check_complaint_rate_limit()` checks:
-   - If the same `student_phone` has submitted $\ge 3$ complaints in the last 15 minutes, the query is rejected with `RATE_LIMIT_EXCEEDED`.
-   - If the same `(hostel_block, room_number)` has submitted $\ge 5$ complaints in the last 15 minutes, the query is rejected.
-2. **Storage RLS**:
-   Only files in `complaint-attachments` bucket up to 5MB are permitted, restricted to image formats (`image/jpeg`, `image/png`, `image/webp`).
-3. **No Mock Data Clutter**:
-   The code directly communicates with Supabase. When Supabase keys are provided, it operates 100% on live database records.
